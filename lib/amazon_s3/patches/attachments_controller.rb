@@ -1,11 +1,12 @@
 module AmazonS3
-  module AttachmentsControllerPatch
-    def self.included(base)
-      base.class_eval do
-        before_action :find_thumbnail_attachment, :only => [:thumbnail]
-        skip_before_action :file_readable
+  module Patches
+    module AttachmentsController
+      def self.included(base)
+        base.class_eval do
+          before_action :find_thumbnail_attachment, :only => [:thumbnail]
+          skip_before_action :file_readable
+        end
       end
-    end
 
   def show
     if @attachment.container.respond_to?(:attachments)
@@ -56,8 +57,9 @@ module AmazonS3
       return if url.nil?
       redirect_to(url)
     end
+    end
   end
 end
 
-AttachmentsController.include(AmazonS3::AttachmentsControllerPatch)
+AttachmentsController.include(AmazonS3::Patches::AttachmentsController)
 

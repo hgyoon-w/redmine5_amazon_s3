@@ -1,13 +1,14 @@
 module AmazonS3
-  module AttachmentPatch
-    def self.included(base)
-      base.class_eval do
-        attr_accessor :s3_access_key_id, :s3_secret_acces_key, :s3_bucket, :s3_bucket
-        after_validation :put_to_s3
-        after_create      :generate_thumbnail_s3
-        before_destroy   :delete_from_s3
+  module Patches
+    module Attachment
+      def self.included(base)
+        base.class_eval do
+          attr_accessor :s3_access_key_id, :s3_secret_acces_key, :s3_bucket, :s3_bucket
+          after_validation :put_to_s3
+          after_create      :generate_thumbnail_s3
+          before_destroy   :delete_from_s3
+        end
       end
-    end
 
   def put_to_s3
     if @temp_file && (@temp_file.size > 0) && errors.blank?
@@ -62,7 +63,8 @@ module AmazonS3
     def generate_thumbnail_s3
       thumbnail_s3(update_thumb: true)
     end
+    end
   end
 end
 
-Attachment.include(AmazonS3::AttachmentPatch)
+Attachment.include(AmazonS3::Patches::Attachment)
