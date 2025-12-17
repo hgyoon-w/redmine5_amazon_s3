@@ -11,7 +11,7 @@ module AmazonS3
           def put_to_s3
             if @temp_file && (@temp_file.size > 0) && errors.blank?
               self.disk_directory = disk_directory || target_directory
-              self.disk_filename  = Attachment.disk_filename(filename, disk_directory) if disk_filename.blank?
+              self.disk_filename  = Redmine::Utils.random_hex(16) if disk_filename.blank?
               logger.debug("Uploading to #{disk_filename}")
               AmazonS3::Connection.put(disk_filename_s3, filename, @temp_file, self.content_type)
               self.digest = Time.now.to_i.to_s
